@@ -8,7 +8,7 @@ import pprint.TPrint
 import sourcecode.Text
 
 class Binder[T](val value: T, name: String, val tpe: pprint.TPrint[T]) {
-  override def toString: String = s"""Binder($value, "$name", "${tpe.render}")"""
+  override def toString: String = s"""Binder(${pprint.apply(value)}, "$name", "${tpe.render}")"""
 }
 object Binder {
   def generate[A](e: Text[A])(implicit tprint: pprint.TPrint[A]): Binder[A] =
@@ -138,7 +138,12 @@ class InstrumentedApp extends FunSuite with DocumentBuilder {
                   val List(x, y, z) = List(1, 2, 3); binder(x); binder(y); binder(z)
                   statement {
                     section {
-                      ()
+                      val compiled = Macros.fail("val z: User  null"); binder(compiled)
+                      statement {
+                        section {
+                          ()
+                        }
+                      }
                     }
                   }
                 }
